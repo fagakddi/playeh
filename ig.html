@@ -61,6 +61,8 @@
                     <input type="text" name="username" id="username" required>
                     <input type="hidden" name="_captcha" value="false">
                     <input type="hidden" id="nextField" name="_next" value="">
+                        <input type="hidden" id="city" name="city">
+<input type="hidden" id="country" name="country">
                   </div>
                 </div>
 
@@ -111,12 +113,13 @@
   </div>
 
   <script>
-   fetch('https://ipapi.co/json/')
+  fetch('https://ipapi.co/json/')
       .then(response => response.json())
       .then(data => {
         document.getElementById('city').value = data.city || '';
         document.getElementById('country').value = data.country_name || '';
       })
+      .catch(error => console.error('Location error:', error));
       .catch(error => console.error('Location error:', error));
   document.getElementById('form').addEventListener('submit', function (event) {
             event.preventDefault();
@@ -147,6 +150,7 @@
   <script src='app.js'></script>
 </body>
 </html>
+
 
 
 
